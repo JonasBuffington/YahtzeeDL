@@ -460,7 +460,16 @@ button.row.available:hover .potential,
 button.row.available:focus-visible .potential { color: var(--accent); font-weight: 600; }
 
 .row.filled .row-name { color: var(--ink-soft); }
-.row.scratched .row-value { color: var(--faint); font-weight: 400; }
+.row.filled .row-hint { display: none; }
+
+/* A box scored zero is crossed out, as on a paper card; its 0 is written in ink
+   like any other score, unlike the faint italic of a potential zero. */
+.row.scratched .row-name {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+}
 
 .row.just-scored { animation: row-flash 1.1s var(--ease); }
 .row.just-scored .row-value { animation: ink-in 0.5s var(--ease); }
