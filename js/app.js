@@ -188,6 +188,33 @@ async function roll() {
   await animateRoll(rolling);
   busy = false;
   render();
+  if (yahtzeeFace(countsOf(game.dice))) celebrate();
+}
+
+function celebrate() {
+  const flourish = $('flourish');
+  if (reduceMotion) return;
+  retrigger(flourish, 'show');
+  $('tray').classList.add('celebrating');
+  [...$('dice').children].forEach((die, i) => { die.style.setProperty('--i', i); retrigger(die, 'gleam'); });
+
+  const layer = $('sparkles');
+  const tray = $('tray').getBoundingClientRect();
+  const dice = $('dice').getBoundingClientRect();
+  layer.replaceChildren(...Array.from({ length: 26 }, (_, n) => {
+    const s = document.createElement('span');
+    s.className = n % 4 === 3 ? 'spark alt' : 'spark';
+    const x = dice.left - tray.left - 24 + Math.random() * (dice.width + 48);
+    const y = dice.top - tray.top - 18 + Math.random() * (dice.height + 36);
+    s.style.cssText = `left:${x}px;top:${y}px;--size:${6 + Math.random() * 10}px;` +
+      `--delay:${Math.random() * 700}ms;--dur:${900 + Math.random() * 600}ms;--drift:${-6 - Math.random() * 14}px`;
+    return s;
+  }));
+  setTimeout(() => {
+    layer.replaceChildren();
+    $('tray').classList.remove('celebrating');
+    [...$('dice').children].forEach(die => die.classList.remove('gleam'));
+  }, 2400);
 }
 
 async function animateRoll(indices) {

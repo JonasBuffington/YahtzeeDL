@@ -12,6 +12,7 @@
   --rule-strong: #221e19;
   --accent: #8a2c22;
   --accent-soft: #f0dcd4;
+  --gold: #b3811f;
   --good: #3f6b3a;
   --pip: #221e19;
   --shadow: #d8cebd;
@@ -36,6 +37,7 @@
     --rule-strong: #ece4d5;
     --accent: #d98a74;
     --accent-soft: #3b2520;
+    --gold: #e3b95e;
     --good: #93b784;
     --pip: #ece4d5;
     --shadow: #0d0c0a;
@@ -318,6 +320,85 @@ h1 em { font-weight: 400; }
   100% { transform: none; }
 }
 
+/* ---------- Yahtzee celebration ---------- */
+
+.sparkles { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+
+.spark {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  background: var(--gold);
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  opacity: 0;
+  animation: twinkle var(--dur) var(--delay) var(--ease) both;
+}
+
+.spark.alt { background: var(--accent); }
+
+@keyframes twinkle {
+  0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0); }
+  35% { opacity: 1; transform: translateY(calc(var(--drift) * 0.4)) rotate(70deg) scale(1); }
+  60% { opacity: 0.85; transform: translateY(calc(var(--drift) * 0.7)) rotate(110deg) scale(0.7); }
+  100% { opacity: 0; transform: translateY(var(--drift)) rotate(180deg) scale(0); }
+}
+
+.flourish {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  margin: 0;
+  line-height: 22px;
+  text-align: center;
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flourish.show { animation: flourish 2s var(--ease) both; }
+.tray.celebrating .die::after { opacity: 0; }
+
+@keyframes flourish {
+  0% { opacity: 0; transform: translateY(6px); letter-spacing: 0; }
+  20% { opacity: 1; transform: none; letter-spacing: 0.06em; }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-4px); letter-spacing: 0.1em; }
+}
+
+.die.gleam { animation: gleam 0.9s calc(var(--i) * 70ms) var(--ease) both; }
+.die.gleam .pip { animation: pip-gleam 1.6s calc(var(--i) * 70ms) ease both; }
+
+@keyframes gleam {
+  0% { transform: none; }
+  30% { transform: translateY(-9px) rotate(-3deg); border-color: var(--gold); }
+  60% { transform: translateY(1px); border-color: var(--gold); }
+  100% { transform: none; }
+}
+
+@keyframes pip-gleam {
+  0%, 100% { background: var(--pip); }
+  25%, 70% { background: var(--gold); }
+}
+
+.die.held.gleam .pip { animation-name: pip-gleam-held; }
+.die.held.gleam { animation-name: gleam-held; }
+
+@keyframes gleam-held {
+  0%, 100% { transform: translateY(-10px); }
+  30% { transform: translateY(-19px) rotate(-3deg); border-color: var(--gold); }
+  60% { transform: translateY(-9px); }
+}
+
+@keyframes pip-gleam-held {
+  0%, 100% { background: var(--accent); }
+  25%, 70% { background: var(--gold); }
+}
+
 /* ---------- Interlude between rounds ---------- */
 
 .interlude {
@@ -418,7 +499,7 @@ h1 em { font-weight: 400; }
 .row {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center; /* not baseline: an empty value cell has no baseline and grows the row */
   gap: 12px;
   width: 100%;
   min-height: 38px;
@@ -434,7 +515,7 @@ button.row { cursor: default; }
 button.row.available { cursor: pointer; }
 button.row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-.row-name { font-size: 17px; }
+.row-name { font-size: 17px; line-height: 24px; position: relative; }
 .row-hint { font-size: 13px; font-style: italic; color: var(--muted); margin-left: 6px; }
 
 .row-value {
@@ -461,6 +542,26 @@ button.row.available:focus-visible .potential { color: var(--accent); font-weigh
 
 .row.filled .row-name { color: var(--ink-soft); }
 .row.filled .row-hint { display: none; }
+
+/* A small ledger tick in the margin marks a box as used. */
+.row.filled:not(.scratched) .row-name::before {
+  content: '';
+  position: absolute;
+  left: -13px;
+  top: 50%;
+  width: 4px;
+  height: 9px;
+  border: solid var(--accent);
+  border-width: 0 1.6px 1.6px 0;
+  transform: translateY(-65%) rotate(40deg);
+}
+
+.row.just-scored .row-name::before { animation: tick-in 0.45s 0.15s var(--ease) both; }
+
+@keyframes tick-in {
+  0% { opacity: 0; transform: translateY(-65%) rotate(40deg) scale(0.2); }
+  100% { opacity: 1; transform: translateY(-65%) rotate(40deg) scale(1); }
+}
 
 /* A box scored zero is crossed out, as on a paper card; its 0 is written in ink
    like any other score, unlike the faint italic of a potential zero. */
@@ -764,7 +865,7 @@ details.replay[open] summary::before { content: '–'; }
   .card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 18px;
+    column-gap: 26px;
     padding: 14px 14px 16px;
   }
   .card-section + .card-section { margin-top: 0; }
@@ -785,7 +886,7 @@ details.replay[open] summary::before { content: '–'; }
   .edition { font-size: 11px; letter-spacing: 0.08em; }
   .progress { gap: 4px; margin-top: 12px; }
   .progress li { width: 14px; }
-  .card { column-gap: 12px; padding: 12px 10px 14px; }
+  .card { column-gap: 24px; padding: 12px 10px 14px; }
   .row-name { font-size: 14px; }
   .section-title { font-size: 11px; letter-spacing: 0.12em; }
   dialog.sheet { padding: 28px 20px 22px; }
