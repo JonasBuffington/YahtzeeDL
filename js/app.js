@@ -252,6 +252,14 @@ async function scoreCategory(c) {
     toast(`A joker Yahtzee must go in ${CATEGORIES[yahtzeeFace(counts) - 1].name} while it’s open.`);
     return;
   }
+  if (s === 0 && game.card.some((value, category) =>
+    value === null && category !== c && placementScore(counts, category, mask) > 0
+  )) {
+    const confirmed = window.confirm(
+      `Score 0 in ${CATEGORIES[c].name}? You have another open box that can score points with these dice.`
+    );
+    if (!confirmed) return;
+  }
   const before = score();
   const bonus = yahtzeeBonus(counts, mask, game.card[YAHTZEE] === 50);
 
