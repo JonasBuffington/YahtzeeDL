@@ -255,9 +255,13 @@ async function scoreCategory(c) {
   if (s === 0 && game.card.some((value, category) =>
     value === null && category !== c && placementScore(counts, category, mask) > 0
   )) {
-    const confirmed = window.confirm(
-      `Score 0 in ${CATEGORIES[c].name}? You have another open box that can score points with these dice.`
-    );
+    busy = true;
+    let confirmed;
+    try {
+      confirmed = await confirmZeroScore(c);
+    } finally {
+      busy = false;
+    }
     if (!confirmed) return;
   }
   const before = score();
@@ -455,6 +459,17 @@ function showStats() {
 }
 
 // ---------- Misc UI ----------
+
+function confirmZeroScore(c) {
+  const dialog = $('zero-score-dialog');
+  $('zero-score-title').textContent = `Score 0 in ${CATEGORIES[c].name}?`;
+  dialog.returnValue = '';
+  return new Promise(resolve => {
+    dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
+    openDialog('zero-score-dialog');
+    $('zero-score-cancel').focus();
+  });
+}
 
 function openDialog(id) {
   document.querySelectorAll('dialog[open]').forEach(d => d.close());

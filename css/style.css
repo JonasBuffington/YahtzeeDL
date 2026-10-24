@@ -805,6 +805,10 @@ kbd {
 .button.primary { background: var(--ink); color: var(--paper); }
 .button:hover { background: var(--accent); border-color: var(--accent); color: var(--paper-raised); }
 
+dialog.score-confirm { width: min(440px, calc(100vw - 32px)); }
+.score-confirm .actions { justify-content: flex-start; }
+.score-confirm .button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
 .countdown { font-size: 14px; color: var(--muted); margin-top: 14px; }
 .countdown strong { color: var(--ink); font-weight: 600; }
 

@@ -92,6 +92,15 @@
     <p class="small">Keyboard: <kbd>Space</kbd> to roll, <kbd>1</kbd>–<kbd>5</kbd> to hold dice.</p>
   </dialog>
 
+  <dialog tabindex="-1" id="zero-score-dialog" class="sheet score-confirm" aria-labelledby="zero-score-title" aria-describedby="zero-score-description">
+    <h2 id="zero-score-title">Score 0 points?</h2>
+    <p class="lede" id="zero-score-description">Another open box can score points with these dice. Would you like to choose again or keep the zero?</p>
+    <form method="dialog" class="actions">
+      <button class="button primary" id="zero-score-cancel" value="cancel" autofocus>Choose again</button>
+      <button class="button" value="confirm">Score 0</button>
+    </form>
+  </dialog>
+
   <dialog tabindex="-1" id="stats-dialog" class="sheet">
     <form method="dialog"><button class="close" aria-label="Close">×</button></form>
     <h2>Statistics</h2>
